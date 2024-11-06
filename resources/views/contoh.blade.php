@@ -16,7 +16,7 @@
         </div>
         <div class="card">
             <h3>Total Pendapatan</h3>
-            <p id="total-revenue">Rp 50,000,000</p>
+            <p id="total-revenue">{{$totalRevenue}}</p>
         </div>
         <div class="card">
             <h3>Pengguna Terdaftar</h3>
@@ -31,6 +31,9 @@
     <!-- Sales Chart -->
     <div id="chart">
         <h2>Grafik Penjualan Bulanan</h2>
-        <canvas id="salesChart"></canvas>
+        {{-- <canvas id="salesChart"></canvas> --}}
+        {!! $chart->container() !!}
     </div>
+    <script src="{{ $chart->cdn() }}"></script>
+    {{ $chart->script() }}
 @endsection

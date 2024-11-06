@@ -23,6 +23,9 @@ Route::post('/produk/add', [ProdukController::class, 'CreateProduk']);
 
 Route::delete('/produk/delete/{kode_produk}', [ProdukController::class, 'DeleteProduk']);
 
+Route::get('/laporan', [ProdukController::class, 'ViewLaporan']);
+Route::get('/report', [ProdukController::class, 'print']);
+
 // Route::get('produk', function () {
 //     return view('produk');
 // });
