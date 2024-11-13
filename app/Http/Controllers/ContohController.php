@@ -8,6 +8,7 @@ use App\Policies\ProdukPolicy;
 use ArielMejiaDev\LarapexCharts\Facades\LarapexChart;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ContohController extends Controller
 {
@@ -21,10 +22,22 @@ class ContohController extends Controller
         // ];
         // return view ('contoh', $data);
 
-        $produkPerHari = Produk::selectRaw('DATE(created_at) as date, COUNT(*) as total')
+        // $produkPerHari = Produk::selectRaw('DATE(created_at) as date, COUNT(*) as total')
+        $isAdmin = Auth::user()->role === 'admin';
+        $produkPerHariQuery = Produk::selectRaw('DATE(created_at) as date, COUNT(*) as total')
         ->groupBy('date')
-        ->orderBy('date','asc')
-        ->get();
+        ->orderBy('date','asc');
+        // ->get();
+
+        if (!$isAdmin){
+            $produkPerHariQuery->where('user_id', Auth::id());
+        }
+        $produkPerHari = $produkPerHariQuery->get();
+
+        $totalProductsQuery = Produk::query();
+        if (!$isAdmin){
+            $totalProductsQuery->where('user_id', Auth::id());
+        }
 
         $dates = [];
         $totals = [];

@@ -9,7 +9,7 @@
         <div class="container">
             <h1>Update Data Produk</h1>
             @foreach ($produkupd as $item )
-            <form action="{{ url('/produk/upd')}}" method="POST" enctype="multipart/form-data">
+            <form action="{{ url(Auth::user()->role.'/produk/upd')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="kode_produk" value="{{$item->kode_produk }}">
                 <div class="form-group">

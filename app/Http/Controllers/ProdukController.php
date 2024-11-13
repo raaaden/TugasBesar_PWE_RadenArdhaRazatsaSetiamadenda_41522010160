@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreprodukRequest;
 use App\Http\Requests\UpdateprodukRequest;
 use Barryvdh\DomPDF\Facade\Pdf;
+// use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProdukController extends Controller
 {
@@ -16,7 +18,9 @@ class ProdukController extends Controller
      */
     public function ViewProduk()
     {
-        $produk = Produk::all(); //mengambil semua data di tabel produk
+        // $produk = Produk::all(); //mengambil semua data di tabel produk
+        $isAdmin = Auth::user()->role=='admin';
+        $produk = $isAdmin ? Produk::all() : Produk::where('user_id', Auth::user()->id)->get();
         return view('produk', ['produk' => $produk]); //nenampilkan view dari produk.blade.php dengan membava variabel $produk
     }
 
@@ -35,10 +39,12 @@ class ProdukController extends Controller
             'deskripsi'=> $request->deskripsi,
             'harga'=> $request->harga,
             'jumlah_produk'=> $request->jumlah_produk,
-            'image'=> $imageName
+            'image'=> $imageName,
+            'user_id'=> Auth::user()->id
         ]);
 
         // return redirect('/produk');
+        return redirect(Auth::user()->role.'/produk');
 
         return redirect()->back()->with("berhasil","produk berhasil di tambahkan!");
     }
@@ -51,7 +57,7 @@ class ProdukController extends Controller
     {
         produk::where('kode_produk', $kode_produk)->delete();
 
-        return redirect('/produk')->with('berhasil','Data Berhasil Dihapus');
+        return redirect(Auth::user()->role. '/produk')->with('berhasil','Data Berhasil Dihapus');
     }
     public function EditProduk(Request $request){
     $data=[
@@ -71,7 +77,8 @@ class ProdukController extends Controller
             'deskripsi'=> $request->deskripsi,
             'harga'=> $request->harga,
             'jumlah_produk'=> $request->jumlah_produk,
-            'image'=> $imageName
+            'image'=> $imageName,
+            'user_id'=> Auth::user()->id
         ]);
 
     $updateprd=produk::find($request->kode_produk);
@@ -81,7 +88,7 @@ class ProdukController extends Controller
     $updateprd->jumlah_produk=$request->jumlah_produk;
     $updateprd->image=$imageName;
     $updateprd->save();
-    return redirect('/produk')->with('berhasil','Data Berhasil Diupdate');
+    return redirect(Auth::user()->role.'/produk')->with('berhasil','Data Berhasil Diupdate');
 
 
     }
@@ -101,4 +108,4 @@ class ProdukController extends Controller
         return $pdf->stream('laporan-produk.pdf');
     }
 
-}   
+}
